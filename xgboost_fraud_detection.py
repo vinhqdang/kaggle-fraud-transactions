@@ -95,6 +95,12 @@ class XGBoostFraudDetector:
             X_temp, y_temp, test_size=0.50, random_state=self.random_state, stratify=y_temp
         )
 
+        # Save test set transaction IDs for KumoRFM comparison
+        test_transaction_ids = X_test['id'].values
+        os.makedirs('results', exist_ok=True)
+        np.save('results/test_transaction_ids.npy', test_transaction_ids)
+        print(f"Saved {len(test_transaction_ids)} test transaction IDs to results/test_transaction_ids.npy")
+
         print(f"X_train shape: {X_train.shape}")
         print(f"X_cv shape: {X_cv.shape}")
         print(f"X_test shape: {X_test.shape}")

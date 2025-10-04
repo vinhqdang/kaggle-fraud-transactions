@@ -1,0 +1,921 @@
+[2025-10-04 10:20:57 - kumoai:203 - INFO] Successfully initialized the Kumo SDK against deployment https://kumorfm.ai/api, with log level INFO.
+================================================================================
+KUMORFM FRAUD DETECTION PIPELINE
+================================================================================
+Initializing KumoRFM SDK...
+KumoRFM SDK initialized successfully
+Loading data files...
+Transactions shape: (8914963, 14)
+Cards shape: (6146, 13)
+Users shape: (2000, 14)
+Fraud rate: 0.0015
+Creating KumoRFM graph...
+🗂️ Graph Metadata:
+        name    primary_key    time_column
+transactions transaction_id           date
+       cards             id acct_open_date
+       users             id              -
+🕸️ Graph Links (FK ↔️ PK):
+• transactions.card_id ↔️ cards.id
+• users.num_credit_cards ↔️ cards.id
+
+Existing graph structure:
+🕸️ Graph Links (FK ↔️ PK):
+• transactions.card_id ↔️ cards.id
+• users.num_credit_cards ↔️ cards.id
+
+Adding additional links if needed...
+Added link: transactions.client_id -> users
+Added link: cards.client_id -> users
+
+Final graph structure:
+🕸️ Graph Links (FK ↔️ PK):
+• transactions.card_id ↔️ cards.id
+• users.num_credit_cards ↔️ cards.id
+• cards.client_id ↔️ users.id
+• transactions.client_id ↔️ users.id
+KumoRFM graph created successfully
+
+Initializing KumoRFM model...
+✅ Materializing graph (2.47s)                              
+   ↳ Sanitized input data                                   
+   ↳ Collected primary keys from 3 tables                   
+   ↳ Identified temporal graph from 1991-01-01 to 2020-02-01
+   ↳ Created graph with 8,923,109 nodes and 35,676,144 edgesMaking predictions with KumoRFM...
+Loaded 1782993 test transaction IDs from results/test_transaction_ids.npy
+Test set contains 1782993 transactions
+Fraud rate in test set: 0.0015
+
+Processing 1782993 transactions in 1783 batches of 1000...
+
+Batch 1/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7475350.0, 
+   7475353.0, 7475371.0, 7475372.0, 7475383.0, ...) (12.98s)                    
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 1 completed: 2000 predictions
+
+Batch 2/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7484257.0, 
+   7484262.0, 7484271.0, 7484279.0, 7484289.0, ...) (4.79s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.12MB                                           ✓ Batch 2 completed: 2000 predictions
+
+Batch 3/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7493073.0, 
+   7493084.0, 7493091.0, 7493092.0, 7493095.0, ...) (5.46s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 3 completed: 2000 predictions
+
+Batch 4/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7502173.0, 
+   7502178.0, 7502190.0, 7502198.0, 7502201.0, ...) (4.40s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 4 completed: 2000 predictions
+
+Batch 5/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7511012.0, 
+   7511021.0, 7511028.0, 7511030.0, 7511053.0, ...) (4.34s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 5 completed: 2000 predictions
+
+Batch 6/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7519699.0, 
+   7519707.0, 7519718.0, 7519726.0, 7519742.0, ...) (4.26s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.12MB                                           ✓ Batch 6 completed: 2000 predictions
+
+Batch 7/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7528691.0, 
+   7528696.0, 7528705.0, 7528708.0, 7528726.0, ...) (3.96s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 7 completed: 2000 predictions
+
+Batch 8/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7537838.0, 
+   7537843.0, 7537848.0, 7537856.0, 7537857.0, ...) (4.05s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 8 completed: 2000 predictions
+
+Batch 9/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7546632.0, 
+   7546643.0, 7546648.0, 7546649.0, 7546670.0, ...) (4.00s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 9 completed: 2000 predictions
+
+Batch 10/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7555825.0, 
+   7555837.0, 7555848.0, 7555872.0, 7555879.0, ...) (4.20s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 10 completed: 2000 predictions
+
+Batch 11/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7564288.0, 
+   7564295.0, 7564297.0, 7564307.0, 7564327.0, ...) (3.85s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 11 completed: 2000 predictions
+
+Batch 12/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7573126.0, 
+   7573143.0, 7573147.0, 7573149.0, 7573151.0, ...) (3.96s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.11MB                                           ✓ Batch 12 completed: 2000 predictions
+
+Batch 13/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7582196.0, 
+   7582207.0, 7582212.0, 7582217.0, 7582234.0, ...) (3.85s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.12MB                                           ✓ Batch 13 completed: 2000 predictions
+
+Batch 14/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7590834.0, 
+   7590850.0, 7590859.0, 7590860.0, 7590865.0, ...) (4.02s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 14 completed: 2000 predictions
+
+Batch 15/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7599416.0, 
+   7599420.0, 7599427.0, 7599429.0, 7599438.0, ...) (4.37s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 15 completed: 2000 predictions
+
+Batch 16/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7608619.0, 
+   7608620.0, 7608628.0, 7608630.0, 7608638.0, ...) (4.10s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.10MB                                           ✓ Batch 16 completed: 2000 predictions
+
+Batch 17/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7616670.0, 
+   7616685.0, 7616698.0, 7616702.0, 7616711.0, ...) (3.99s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 17 completed: 2000 predictions
+
+Batch 18/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7625529.0, 
+   7625539.0, 7625595.0, 7625597.0, 7625599.0, ...) (3.91s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 18 completed: 2000 predictions
+
+Batch 19/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7633778.0, 
+   7633792.0, 7633794.0, 7633809.0, 7633819.0, ...) (3.94s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 19 completed: 2000 predictions
+
+Batch 20/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7642705.0, 
+   7642706.0, 7642718.0, 7642722.0, 7642748.0, ...) (4.35s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 20 completed: 2000 predictions
+
+Batch 21/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7652216.0, 
+   7652221.0, 7652235.0, 7652240.0, 7652252.0, ...) (3.78s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 21 completed: 2000 predictions
+
+Batch 22/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7661088.0, 
+   7661102.0, 7661105.0, 7661112.0, 7661132.0, ...) (4.00s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 22 completed: 2000 predictions
+
+Batch 23/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7670260.0, 
+   7670298.0, 7670305.0, 7670315.0, 7670317.0, ...) (4.22s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 23 completed: 2000 predictions
+
+Batch 24/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7678980.0, 
+   7678996.0, 7679011.0, 7679018.0, 7679024.0, ...) (4.42s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.12MB                                           ✓ Batch 24 completed: 2000 predictions
+
+Batch 25/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7688387.0, 
+   7688397.0, 7688398.0, 7688411.0, 7688412.0, ...) (4.99s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 25 completed: 2000 predictions
+
+Batch 26/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7697244.0, 
+   7697250.0, 7697261.0, 7697263.0, 7697267.0, ...) (4.19s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.11MB                                           ✓ Batch 26 completed: 2000 predictions
+
+Batch 27/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7706687.0, 
+   7706688.0, 7706699.0, 7706704.0, 7706710.0, ...) (4.48s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 27 completed: 2000 predictions
+
+Batch 28/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7715729.0, 
+   7715740.0, 7715755.0, 7715757.0, 7715758.0, ...) (4.26s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 28 completed: 2000 predictions
+
+Batch 29/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7724600.0, 
+   7724607.0, 7724614.0, 7724621.0, 7724632.0, ...) (7.84s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 29 completed: 2000 predictions
+
+Batch 30/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7733600.0, 
+   7733611.0, 7733617.0, 7733621.0, 7733627.0, ...) (6.35s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.11MB                                           ✓ Batch 30 completed: 2000 predictions
+
+Batch 31/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7743110.0, 
+   7743112.0, 7743122.0, 7743136.0, 7743139.0, ...) (4.79s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 31 completed: 2000 predictions
+
+Batch 32/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7752017.0, 
+   7752018.0, 7752039.0, 7752040.0, 7752072.0, ...) (4.56s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.12MB                                           ✓ Batch 32 completed: 2000 predictions
+
+Batch 33/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7761094.0, 
+   7761097.0, 7761103.0, 7761114.0, 7761122.0, ...) (4.76s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 33 completed: 2000 predictions
+
+Batch 34/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7770077.0, 
+   7770095.0, 7770109.0, 7770111.0, 7770115.0, ...) (4.21s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 34 completed: 2000 predictions
+
+Batch 35/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7778730.0, 
+   7778741.0, 7778744.0, 7778748.0, 7778753.0, ...) (3.94s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 35 completed: 2000 predictions
+
+Batch 36/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7787474.0, 
+   7787479.0, 7787493.0, 7787504.0, 7787512.0, ...) (3.82s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.11MB                                           ✓ Batch 36 completed: 2000 predictions
+
+Batch 37/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7796199.0, 
+   7796203.0, 7796219.0, 7796224.0, 7796245.0, ...) (3.79s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 37 completed: 2000 predictions
+
+Batch 38/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7805070.0, 
+   7805073.0, 7805087.0, 7805098.0, 7805102.0, ...) (3.68s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 38 completed: 2000 predictions
+
+Batch 39/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7814522.0, 
+   7814523.0, 7814548.0, 7814555.0, 7814557.0, ...) (4.01s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 39 completed: 2000 predictions
+
+Batch 40/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7823107.0, 
+   7823108.0, 7823111.0, 7823127.0, 7823134.0, ...) (3.94s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 40 completed: 2000 predictions
+
+Batch 41/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7832287.0, 
+   7832293.0, 7832295.0, 7832304.0, 7832305.0, ...) (3.75s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.18MB                                           ✓ Batch 41 completed: 2000 predictions
+
+Batch 42/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7841237.0, 
+   7841248.0, 7841257.0, 7841260.0, 7841261.0, ...) (4.16s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 42 completed: 2000 predictions
+
+Batch 43/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7850220.0, 
+   7850231.0, 7850236.0, 7850241.0, 7850242.0, ...) (3.90s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 43 completed: 2000 predictions
+
+Batch 44/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7859418.0, 
+   7859446.0, 7859461.0, 7859484.0, 7859513.0, ...) (3.96s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 44 completed: 2000 predictions
+
+Batch 45/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7868637.0, 
+   7868645.0, 7868657.0, 7868663.0, 7868664.0, ...) (3.95s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.17MB                                           ✓ Batch 45 completed: 2000 predictions
+
+Batch 46/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7877402.0, 
+   7877403.0, 7877407.0, 7877441.0, 7877447.0, ...) (3.88s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 46 completed: 2000 predictions
+
+Batch 47/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7886102.0, 
+   7886106.0, 7886131.0, 7886133.0, 7886134.0, ...) (3.96s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 47 completed: 2000 predictions
+
+Batch 48/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7895240.0, 
+   7895269.0, 7895289.0, 7895291.0, 7895293.0, ...) (3.99s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 48 completed: 2000 predictions
+
+Batch 49/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7904722.0, 
+   7904750.0, 7904763.0, 7904765.0, 7904766.0, ...) (9.59s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 49 completed: 2000 predictions
+
+Batch 50/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7913648.0, 
+   7913651.0, 7913667.0, 7913670.0, 7913671.0, ...) (5.73s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.12MB                                           ✓ Batch 50 completed: 2000 predictions
+
+Batch 51/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7922658.0, 
+   7922661.0, 7922677.0, 7922689.0, 7922707.0, ...) (4.40s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 51 completed: 2000 predictions
+
+Batch 52/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7931938.0, 
+   7931949.0, 7931978.0, 7931979.0, 7931987.0, ...) (4.20s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 52 completed: 2000 predictions
+
+Batch 53/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7940941.0, 
+   7940943.0, 7940951.0, 7940957.0, 7940958.0, ...) (11.37s)                    
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 53 completed: 2000 predictions
+
+Batch 54/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7949900.0, 
+   7949912.0, 7949924.0, 7949927.0, 7949928.0, ...) (4.84s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 54 completed: 2000 predictions
+
+Batch 55/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7959075.0, 
+   7959078.0, 7959081.0, 7959109.0, 7959117.0, ...) (4.36s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 55 completed: 2000 predictions
+
+Batch 56/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7968102.0, 
+   7968123.0, 7968122.0, 7968145.0, 7968159.0, ...) (7.10s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 56 completed: 2000 predictions
+
+Batch 57/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7977026.0, 
+   7977034.0, 7977038.0, 7977048.0, 7977056.0, ...) (6.59s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 57 completed: 2000 predictions
+
+Batch 58/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7986197.0, 
+   7986203.0, 7986218.0, 7986224.0, 7986231.0, ...) (5.01s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 58 completed: 2000 predictions
+
+Batch 59/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (7995141.0, 
+   7995144.0, 7995151.0, 7995153.0, 7995169.0, ...) (4.77s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 59 completed: 2000 predictions
+
+Batch 60/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8004004.0, 
+   8004017.0, 8004024.0, 8004038.0, 8004040.0, ...) (4.15s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 60 completed: 2000 predictions
+
+Batch 61/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8012998.0, 
+   8012999.0, 8013013.0, 8013023.0, 8013025.0, ...) (4.29s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 61 completed: 2000 predictions
+
+Batch 62/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8021944.0, 
+   8021948.0, 8021950.0, 8021953.0, 8021959.0, ...) (3.93s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.09MB                                           ✓ Batch 62 completed: 2000 predictions
+
+Batch 63/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8030616.0, 
+   8030618.0, 8030625.0, 8030630.0, 8030651.0, ...) (3.97s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 63 completed: 2000 predictions
+
+Batch 64/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8039815.0, 
+   8039829.0, 8039836.0, 8039837.0, 8039852.0, ...) (3.80s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.17MB                                           ✓ Batch 64 completed: 2000 predictions
+
+Batch 65/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8048152.0, 
+   8048160.0, 8048173.0, 8048185.0, 8048191.0, ...) (3.72s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 65 completed: 2000 predictions
+
+Batch 66/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8057377.0, 
+   8057380.0, 8057390.0, 8057398.0, 8057399.0, ...) (4.01s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 66 completed: 2000 predictions
+
+Batch 67/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8066603.0, 
+   8066613.0, 8066619.0, 8066622.0, 8066625.0, ...) (4.42s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 67 completed: 2000 predictions
+
+Batch 68/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8075819.0, 
+   8075828.0, 8075829.0, 8075831.0, 8075834.0, ...) (3.87s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 68 completed: 2000 predictions
+
+Batch 69/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8084620.0, 
+   8084624.0, 8084629.0, 8084642.0, 8084648.0, ...) (3.99s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.17MB                                           ✓ Batch 69 completed: 2000 predictions
+
+Batch 70/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8093490.0, 
+   8093497.0, 8093499.0, 8093501.0, 8093504.0, ...) (3.92s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 70 completed: 2000 predictions
+
+Batch 71/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8102749.0, 
+   8102751.0, 8102764.0, 8102769.0, 8102772.0, ...) (3.67s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 71 completed: 2000 predictions
+
+Batch 72/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8111887.0, 
+   8111889.0, 8111917.0, 8111924.0, 8111927.0, ...) (3.94s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 72 completed: 2000 predictions
+
+Batch 73/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8120992.0, 
+   8120994.0, 8120996.0, 8121002.0, 8121004.0, ...) (3.95s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 73 completed: 2000 predictions
+
+Batch 74/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8130141.0, 
+   8130143.0, 8130153.0, 8130155.0, 8130158.0, ...) (4.36s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 74 completed: 2000 predictions
+
+Batch 75/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8139154.0, 
+   8139158.0, 8139159.0, 8139161.0, 8139162.0, ...) (3.98s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 75 completed: 2000 predictions
+
+Batch 76/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8147790.0, 
+   8147793.0, 8147811.0, 8147814.0, 8147820.0, ...) (4.25s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 76 completed: 2000 predictions
+
+Batch 77/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8157135.0, 
+   8157141.0, 8157146.0, 8157147.0, 8157148.0, ...) (4.19s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 77 completed: 2000 predictions
+
+Batch 78/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8166113.0, 
+   8166114.0, 8166117.0, 8166128.0, 8166146.0, ...) (3.82s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.12MB                                           ✓ Batch 78 completed: 2000 predictions
+
+Batch 79/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8174261.0, 
+   8174266.0, 8174320.0, 8174323.0, 8174347.0, ...) (3.75s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.11MB                                           ✓ Batch 79 completed: 2000 predictions
+
+Batch 80/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8183346.0, 
+   8183352.0, 8183358.0, 8183365.0, 8183370.0, ...) (8.38s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.17MB                                           ✓ Batch 80 completed: 2000 predictions
+
+Batch 81/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8192673.0, 
+   8192689.0, 8192698.0, 8192701.0, 8192702.0, ...) (6.31s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.17MB                                           ✓ Batch 81 completed: 2000 predictions
+
+Batch 82/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8201880.0, 
+   8201906.0, 8201912.0, 8201921.0, 8201927.0, ...) (4.55s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 82 completed: 2000 predictions
+
+Batch 83/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8210805.0, 
+   8210829.0, 8210834.0, 8210855.0, 8210889.0, ...) (4.45s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 83 completed: 2000 predictions
+
+Batch 84/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8219472.0, 
+   8219483.0, 8219484.0, 8219485.0, 8219490.0, ...) (4.04s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 84 completed: 2000 predictions
+
+Batch 85/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8228142.0, 
+   8228148.0, 8228152.0, 8228153.0, 8228164.0, ...) (4.01s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.12MB                                           ✓ Batch 85 completed: 2000 predictions
+
+Batch 86/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8237007.0, 
+   8237008.0, 8237032.0, 8237051.0, 8237052.0, ...) (3.76s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 86 completed: 2000 predictions
+
+Batch 87/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8245968.0, 
+   8245974.0, 8245980.0, 8245983.0, 8246002.0, ...) (4.04s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 87 completed: 2000 predictions
+
+Batch 88/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8254997.0, 
+   8255005.0, 8255006.0, 8255011.0, 8255014.0, ...) (3.72s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 88 completed: 2000 predictions
+
+Batch 89/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8264240.0, 
+   8264255.0, 8264265.0, 8264283.0, 8264314.0, ...) (3.71s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 89 completed: 2000 predictions
+
+Batch 90/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8273343.0, 
+   8273360.0, 8273377.0, 8273383.0, 8273385.0, ...) (3.90s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 90 completed: 2000 predictions
+
+Batch 91/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8282763.0, 
+   8282787.0, 8282813.0, 8282826.0, 8282833.0, ...) (3.74s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.18MB                                           ✓ Batch 91 completed: 2000 predictions
+
+Batch 92/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8291711.0, 
+   8291726.0, 8291743.0, 8291777.0, 8291787.0, ...) (4.25s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.17MB                                           ✓ Batch 92 completed: 2000 predictions
+
+Batch 93/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8300889.0, 
+   8300890.0, 8300892.0, 8300911.0, 8300916.0, ...) (4.14s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 93 completed: 2000 predictions
+
+Batch 94/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8310129.0, 
+   8310138.0, 8310150.0, 8310152.0, 8310165.0, ...) (4.19s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 94 completed: 2000 predictions
+
+Batch 95/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8318709.0, 
+   8318715.0, 8318724.0, 8318727.0, 8318745.0, ...) (4.45s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 95 completed: 2000 predictions
+
+Batch 96/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8327361.0, 
+   8327368.0, 8327369.0, 8327370.0, 8327388.0, ...) (4.01s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 96 completed: 2000 predictions
+
+Batch 97/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8336612.0, 
+   8336619.0, 8336634.0, 8336644.0, 8336645.0, ...) (4.09s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 97 completed: 2000 predictions
+
+Batch 98/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8345531.0, 
+   8345548.0, 8345552.0, 8345562.0, 8345566.0, ...) (4.38s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.11MB                                           ✓ Batch 98 completed: 2000 predictions
+
+Batch 99/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8354617.0, 
+   8354619.0, 8354636.0, 8354660.0, 8354702.0, ...) (3.88s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 99 completed: 2000 predictions
+
+Batch 100/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8363969.0, 
+   8363974.0, 8363975.0, 8364010.0, 8364014.0, ...) (3.94s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.11MB                                           ✓ Batch 100 completed: 2000 predictions
+
+Batch 101/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8372817.0, 
+   8372824.0, 8372829.0, 8372845.0, 8372854.0, ...) (3.77s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.11MB                                           ✓ Batch 101 completed: 2000 predictions
+
+Batch 102/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8381590.0, 
+   8381593.0, 8381594.0, 8381599.0, 8381608.0, ...) (3.93s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.17MB                                           ✓ Batch 102 completed: 2000 predictions
+
+Batch 103/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8391286.0, 
+   8391297.0, 8391298.0, 8391299.0, 8391302.0, ...) (3.79s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.13MB                                           ✓ Batch 103 completed: 2000 predictions
+
+Batch 104/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8400712.0, 
+   8400714.0, 8400719.0, 8400735.0, 8400737.0, ...) (3.81s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.14MB                                           ✓ Batch 104 completed: 2000 predictions
+
+Batch 105/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8409753.0, 
+   8409762.0, 8409769.0, 8409780.0, 8409795.0, ...) (3.93s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 105 completed: 2000 predictions
+
+Batch 106/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8418506.0, 
+   8418527.0, 8418537.0, 8418541.0, 8418549.0, ...) (4.20s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.16MB                                           ✓ Batch 106 completed: 2000 predictions
+
+Batch 107/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8427610.0, 
+   8427623.0, 8427626.0, 8427632.0, 8427633.0, ...) (4.02s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 107 completed: 2000 predictions
+
+Batch 108/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8435976.0, 
+   8435978.0, 8435981.0, 8435982.0, 8435983.0, ...) (4.06s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.15MB                                           ✓ Batch 108 completed: 2000 predictions
+
+Batch 109/1783: 1000 transactions (query length: 11065 chars)
+✅ PREDICT transactions.is_fraud FOR transactions.transaction_id IN (8444497.0, 
+   8444506.0, 8444516.0, 8444538.0, 8444547.0, ...) (4.23s)                     
+   ↳ Identified static multi-class classification task                          
+   ↳ Derived anchor time 2020-02-01                                             
+   ↳ Collected 1,000 in-context examples holding 2 classes                      
+   ↳ Generated context of size 2.17MB                                           

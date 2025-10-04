@@ -139,46 +139,91 @@ class KumoRFMFraudDetector:
         print("KumoRFM graph created successfully")
         return self.graph
 
-    def train_and_predict(self, transactions_df):
-        """Train and make predictions using KumoRFM"""
+    def train_and_predict(self, transactions_df, test_transaction_ids=None, max_samples=10000):
+        """Train and make predictions using KumoRFM with batched predictions"""
         print("\nInitializing KumoRFM model...")
 
         # Create KumoRFM model
         self.model = rfm.KumoRFM(self.graph)
 
         print("Making predictions with KumoRFM...")
-        print("Using predictive query to predict fraud...")
 
-        # Sample transactions for prediction (KumoRFM RFM is designed for smaller queries)
-        # Use a smaller sample to avoid query length limitations
-        sample_size = min(1000, len(transactions_df))
-        print(f"Sampling {sample_size} transactions from {len(transactions_df)} total...")
+        # Load test set transaction IDs if not provided
+        if test_transaction_ids is None:
+            test_ids_path = 'results/test_transaction_ids.npy'
+            if os.path.exists(test_ids_path):
+                test_transaction_ids = np.load(test_ids_path)
+                print(f"Loaded {len(test_transaction_ids)} test transaction IDs from {test_ids_path}")
+            else:
+                print("No test set IDs found, will sample randomly")
+                sample_size = min(1000, len(transactions_df))
+                sampled_transactions = transactions_df.sample(n=sample_size, random_state=42)
+                test_transaction_ids = sampled_transactions['id'].values
 
-        sampled_transactions = transactions_df.sample(n=sample_size, random_state=42)
-        transaction_ids = sampled_transactions['transaction_id'].tolist()
+        # Filter transactions to only those in test set
+        test_transactions = transactions_df[transactions_df['id'].isin(test_transaction_ids)].copy()
+        print(f"Full test set contains {len(test_transactions)} transactions")
+        print(f"Fraud rate in full test set: {test_transactions['is_fraud'].mean():.4f}")
 
-        # Create PQL query to predict fraud for transactions
-        # We predict the is_fraud attribute for each transaction
-        # Note: use transaction_id (primary key), not id
-        query = f"PREDICT transactions.is_fraud FOR transactions.transaction_id IN {tuple(transaction_ids)}"
+        # Use stratified sampling to get a manageable subset
+        if len(test_transactions) > max_samples:
+            print(f"\nUsing stratified sample of {max_samples} transactions for evaluation...")
+            from sklearn.model_selection import train_test_split
+            # Stratified sampling to maintain fraud rate
+            test_transactions, _ = train_test_split(
+                test_transactions,
+                test_size=(len(test_transactions) - max_samples) / len(test_transactions),
+                random_state=42,
+                stratify=test_transactions['is_fraud']
+            )
+            print(f"Sampled test set contains {len(test_transactions)} transactions")
+            print(f"Fraud rate in sampled test set: {test_transactions['is_fraud'].mean():.4f}")
 
-        print(f"Running query on {len(transaction_ids)} transactions...")
-        print(f"Query length: {len(query)} characters")
+        # Batch predictions to avoid query length limitations (1000 per batch)
+        batch_size = 1000
+        all_predictions = []
 
-        # Make predictions
-        predictions_df = self.model.predict(query)
+        # Get transaction_id (primary key) from test set
+        test_trans_ids = test_transactions['transaction_id'].values
+        num_batches = (len(test_trans_ids) + batch_size - 1) // batch_size
 
-        # Store sampled transactions for evaluation
-        self.sampled_transactions = sampled_transactions
+        print(f"\nProcessing {len(test_trans_ids)} transactions in {num_batches} batches of {batch_size}...")
 
-        print("Predictions completed")
+        for i in range(0, len(test_trans_ids), batch_size):
+            batch_num = i // batch_size + 1
+            batch_ids = test_trans_ids[i:i + batch_size].tolist()
+
+            # Create PQL query for this batch
+            query = f"PREDICT transactions.is_fraud FOR transactions.transaction_id IN {tuple(batch_ids)}"
+
+            print(f"\nBatch {batch_num}/{num_batches}: {len(batch_ids)} transactions (query length: {len(query)} chars)")
+
+            try:
+                # Make predictions for this batch
+                batch_predictions = self.model.predict(query)
+                all_predictions.append(batch_predictions)
+                print(f"✓ Batch {batch_num} completed: {len(batch_predictions)} predictions")
+            except Exception as e:
+                print(f"✗ Error in batch {batch_num}: {str(e)}")
+                raise
+
+        # Combine all batch predictions
+        predictions_df = pd.concat(all_predictions, ignore_index=True)
+
+        # Store test transactions for evaluation
+        self.test_transactions = test_transactions
+
+        print(f"\n✓ All predictions completed: {len(predictions_df)} total predictions")
         print(f"Predictions shape: {predictions_df.shape}")
 
         return predictions_df
 
-    def evaluate_predictions(self, predictions_df, transactions_df):
+    def evaluate_predictions(self, predictions_df):
         """Evaluate model predictions"""
         print("\n=== KumoRFM Model Evaluation ===")
+
+        # Use stored test transactions
+        transactions_df = self.test_transactions
 
         # Merge predictions with actual labels
         results_df = transactions_df[['transaction_id', 'is_fraud']].merge(
@@ -189,6 +234,8 @@ class KumoRFMFraudDetector:
         )
 
         print(f"Evaluation set size: {len(results_df)}")
+        print(f"Number of fraud cases: {results_df['is_fraud'].sum()}")
+        print(f"Fraud rate: {results_df['is_fraud'].mean():.4f}")
 
         # Extract predictions
         y_true = results_df['is_fraud'].values
@@ -207,26 +254,37 @@ class KumoRFMFraudDetector:
 
         # Calculate metrics
         print("\nConfusion Matrix:")
-        print(confusion_matrix(y_true, y_pred))
+        cm = confusion_matrix(y_true, y_pred)
+        print(cm)
         print("\nClassification Report:")
-        print(classification_report(y_true, y_pred))
+        print(classification_report(y_true, y_pred, zero_division=0))
 
-        roc_auc = roc_auc_score(y_true, y_pred_proba)
-        precision = precision_score(y_true, y_pred)
-        recall = recall_score(y_true, y_pred)
-        f1 = f1_score(y_true, y_pred)
+        # Only calculate metrics if there are positive samples
+        if y_true.sum() > 0:
+            roc_auc = roc_auc_score(y_true, y_pred_proba)
+            precision = precision_score(y_true, y_pred, zero_division=0)
+            recall = recall_score(y_true, y_pred, zero_division=0)
+            f1 = f1_score(y_true, y_pred, zero_division=0)
 
-        print(f"\nROC AUC Score: {roc_auc:.4f}")
-        print(f"Precision: {precision:.4f}")
-        print(f"Recall: {recall:.4f}")
-        print(f"F1 Score: {f1:.4f}")
+            print(f"\nROC AUC Score: {roc_auc:.4f}")
+            print(f"Precision: {precision:.4f}")
+            print(f"Recall: {recall:.4f}")
+            print(f"F1 Score: {f1:.4f}")
 
-        self.results = {
-            'roc_auc': roc_auc,
-            'precision': precision,
-            'recall': recall,
-            'f1': f1
-        }
+            self.results = {
+                'roc_auc': roc_auc,
+                'precision': precision,
+                'recall': recall,
+                'f1': f1
+            }
+        else:
+            print("\n⚠ No positive samples in test set - cannot calculate meaningful metrics")
+            self.results = {
+                'roc_auc': np.nan,
+                'precision': 0.0,
+                'recall': 0.0,
+                'f1': 0.0
+            }
 
         return self.results
 
@@ -253,11 +311,11 @@ class KumoRFMFraudDetector:
             # Create graph
             self.create_graph(transactions_df, cards_df, users_df)
 
-            # Train and predict
+            # Train and predict (will use test set IDs from XGBoost)
             predictions_df = self.train_and_predict(transactions_df)
 
-            # Evaluate (use sampled transactions)
-            self.evaluate_predictions(predictions_df, self.sampled_transactions)
+            # Evaluate on test set
+            self.evaluate_predictions(predictions_df)
 
             # Save results
             self.save_results()
