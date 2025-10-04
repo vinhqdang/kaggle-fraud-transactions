@@ -1,0 +1,22 @@
+# Fraud Detection Project Requirements
+
+# Core Data Science Libraries
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+
+# XGBoost with GPU support
+xgboost>=2.0.0
+
+# Kumo AI SDK
+kumo>=0.1.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Data Processing
+pyarrow>=12.0.0  # For Parquet file support
+
+# Utilities
+python-dateutil>=2.8.0
