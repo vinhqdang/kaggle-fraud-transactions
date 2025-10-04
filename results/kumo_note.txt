@@ -1,0 +1,16 @@
+Kumo AI SDK Note
+==================
+
+The Kumo AI SDK is not publicly available via pip install kumo.
+The package named 'kumo' on PyPI is a different package, not the Kumo AI fraud detection SDK.
+
+To use Kumo AI, you would need:
+1. Access to the actual Kumo AI SDK (likely requires enterprise access)
+2. Valid API credentials for the Kumo AI platform
+3. Proper SDK installation instructions from Kumo AI
+
+Current Status:
+- XGBoost model: ✓ Successfully trained and evaluated
+- Kumo AI model: ✗ SDK not available
+
+For now, we have excellent results from XGBoost with ROC AUC of 0.9926.

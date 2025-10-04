@@ -6,10 +6,13 @@ data/*.json
 models/*.pkl
 models/*.model
 
-# Results
-results/*.csv
+# Results (exclude markdown reports from ignore)
 results/*.png
-results/*.txt
+
+# Allow key result files
+!results/final_report.md
+!results/xgboost_results.csv
+!results/kumo_note.txt
 
 # Python
 __pycache__/
