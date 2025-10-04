@@ -1,75 +1,62 @@
 """
-Kumo AI Fraud Detection Implementation
-Using Kumo's relational foundation model for fraud detection
+KumoRFM Fraud Detection Implementation
+Using KumoRFM (Kumo Relational Foundation Model) for fraud detection
+Based on official KumoRFM quickstart notebook
 """
 
 import numpy as np
 import pandas as pd
 import json
 import os
-import pickle
 from datetime import datetime
 
 try:
-    import kumo
+    import kumoai.experimental.rfm as rfm
 except ImportError:
-    print("Warning: Kumo SDK not installed. Install with: pip install kumo")
-    kumo = None
+    print("Warning: KumoAI SDK not installed. Install with: pip install kumoai")
+    rfm = None
 
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     confusion_matrix, classification_report, roc_auc_score,
     precision_score, recall_score, f1_score
 )
 
-from config import DATA_DIR, KUMO_API_KEY, KUMO_API_URL, RANDOM_SEED
+from config import DATA_DIR, KUMO_API_KEY, RANDOM_SEED
 
 
-class KumoFraudDetector:
-    """Kumo AI-based fraud detection model"""
+class KumoRFMFraudDetector:
+    """KumoRFM-based fraud detection model"""
 
-    def __init__(self, api_key=KUMO_API_KEY, api_url=KUMO_API_URL):
+    def __init__(self, api_key=KUMO_API_KEY):
         self.api_key = api_key
-        self.api_url = api_url
-        self.connector = None
         self.graph = None
         self.model = None
         self.results = {}
 
     def initialize_kumo(self):
-        """Initialize Kumo SDK"""
-        if kumo is None:
-            raise ImportError("Kumo SDK is not installed. Install with: pip install kumo")
+        """Initialize KumoRFM SDK"""
+        if rfm is None:
+            raise ImportError("KumoAI SDK is not installed. Install with: pip install kumoai")
 
-        print("Initializing Kumo SDK...")
-        kumo.init(url=self.api_url, api_key=self.api_key)
-        print("Kumo SDK initialized successfully")
+        print("Initializing KumoRFM SDK...")
+        rfm.init(api_key=self.api_key)
+        print("KumoRFM SDK initialized successfully")
 
     def load_and_prepare_data(self):
-        """Load and prepare data for Kumo"""
+        """Load and prepare data for KumoRFM"""
         print("Loading data files...")
 
-        # Load all data files
+        # Load fraud labels
         with open(os.path.join(DATA_DIR, 'train_fraud_labels.json'), 'r') as f:
             raw_json_data = json.load(f)
         transaction_labels_dict = raw_json_data['target']
         fraud_labels_df = pd.DataFrame([
-            {'transaction_id': k, 'is_fraud': 1 if v == 'Yes' else 0}
+            {'transaction_id': int(k), 'is_fraud': 1 if v == 'Yes' else 0}
             for k, v in transaction_labels_dict.items()
         ])
-        fraud_labels_df['transaction_id'] = pd.to_numeric(fraud_labels_df['transaction_id'])
 
+        # Load transaction data
         transactions_df = pd.read_csv(os.path.join(DATA_DIR, 'transactions_data.csv'))
-        cards_df = pd.read_csv(os.path.join(DATA_DIR, 'cards_data.csv'))
-        users_df = pd.read_csv(os.path.join(DATA_DIR, 'users_data.csv'))
-
-        # Load MCC codes
-        with open(os.path.join(DATA_DIR, 'mcc_codes.json'), 'r') as f:
-            mcc_data = json.load(f)
-        mcc_df = pd.DataFrame([
-            {'mcc_code': int(k), 'mcc_description': v}
-            for k, v in mcc_data.items()
-        ])
 
         # Merge fraud labels with transactions
         transactions_df = transactions_df.merge(
@@ -79,150 +66,143 @@ class KumoFraudDetector:
             how='left'
         )
 
+        # Only keep labeled transactions for training/evaluation
+        transactions_df = transactions_df[transactions_df['is_fraud'].notna()].copy()
+
+        # Ensure correct data types
+        transactions_df['id'] = transactions_df['id'].astype(int)
+        transactions_df['card_id'] = transactions_df['card_id'].astype(int)
+        transactions_df['client_id'] = transactions_df['client_id'].astype(int)
+        transactions_df['is_fraud'] = transactions_df['is_fraud'].astype(int)
+
+        # Convert date to datetime
+        transactions_df['date'] = pd.to_datetime(transactions_df['date'])
+
+        # Load cards data
+        cards_df = pd.read_csv(os.path.join(DATA_DIR, 'cards_data.csv'))
+        cards_df['id'] = cards_df['id'].astype(int)
+        cards_df['client_id'] = cards_df['client_id'].astype(int)
+
+        # Load users data
+        users_df = pd.read_csv(os.path.join(DATA_DIR, 'users_data.csv'))
+        users_df['id'] = users_df['id'].astype(int)
+
         print(f"Transactions shape: {transactions_df.shape}")
         print(f"Cards shape: {cards_df.shape}")
         print(f"Users shape: {users_df.shape}")
-        print(f"MCC codes shape: {mcc_df.shape}")
+        print(f"Fraud rate: {transactions_df['is_fraud'].mean():.4f}")
 
-        return transactions_df, cards_df, users_df, mcc_df
+        return transactions_df, cards_df, users_df
 
-    def save_data_for_kumo(self, transactions_df, cards_df, users_df, mcc_df):
-        """Save data in formats suitable for Kumo (CSV/Parquet)"""
-        print("Saving data for Kumo...")
+    def create_graph(self, transactions_df, cards_df, users_df):
+        """Create KumoRFM graph from data"""
+        print("Creating KumoRFM graph...")
 
-        kumo_data_dir = os.path.join(DATA_DIR, 'kumo_input')
-        os.makedirs(kumo_data_dir, exist_ok=True)
+        # Create LocalGraph from dataframes
+        # This automatically creates LocalTable objects and infers metadata
+        self.graph = rfm.LocalGraph.from_data({
+            'transactions': transactions_df,
+            'cards': cards_df,
+            'users': users_df
+        }, infer_metadata=True)
 
-        # Save as parquet for better performance
-        transactions_df.to_parquet(os.path.join(kumo_data_dir, 'transactions.parquet'), index=False)
-        cards_df.to_parquet(os.path.join(kumo_data_dir, 'cards.parquet'), index=False)
-        users_df.to_parquet(os.path.join(kumo_data_dir, 'users.parquet'), index=False)
-        mcc_df.to_parquet(os.path.join(kumo_data_dir, 'mcc_codes.parquet'), index=False)
+        # Print existing links (from_data already infers some)
+        print("\nExisting graph structure:")
+        self.graph.print_links()
 
-        print(f"Data saved to {kumo_data_dir}")
-        return kumo_data_dir
+        # Add any missing links if needed
+        print("\nAdding additional links if needed...")
 
-    def create_kumo_connector(self, kumo_data_dir):
-        """Create Kumo file connector"""
-        print("Creating Kumo connector...")
+        # Get existing edges to avoid duplicates
+        existing_edges = [(e.src_table, e.fkey, e.dst_table) for e in self.graph.edges]
 
-        # Use FileUploadConnector for local files
-        self.connector = kumo.FileUploadConnector(root_dir=kumo_data_dir)
-        print("Connector created successfully")
+        # Define desired links
+        desired_links = [
+            ("transactions", "card_id", "cards"),
+            ("transactions", "client_id", "users"),
+            ("cards", "client_id", "users")
+        ]
 
-        return self.connector
+        # Add links that don't exist yet
+        for src, fkey, dst in desired_links:
+            if (src, fkey, dst) not in existing_edges:
+                try:
+                    self.graph.link(src_table=src, fkey=fkey, dst_table=dst)
+                    print(f"Added link: {src}.{fkey} -> {dst}")
+                except Exception as e:
+                    print(f"Skipping link {src}.{fkey} -> {dst}: {str(e)}")
 
-    def build_graph(self):
-        """Build Kumo graph from data"""
-        print("Building Kumo graph...")
+        # Print final graph structure
+        print("\nFinal graph structure:")
+        self.graph.print_links()
 
-        # Create tables from source data
-        transactions_table = kumo.Table.from_source_table(
-            source_table=self.connector['transactions'],
-            primary_key='id'
-        ).infer_metadata()
-
-        cards_table = kumo.Table.from_source_table(
-            source_table=self.connector['cards'],
-            primary_key='id'
-        ).infer_metadata()
-
-        users_table = kumo.Table.from_source_table(
-            source_table=self.connector['users'],
-            primary_key='id'
-        ).infer_metadata()
-
-        mcc_table = kumo.Table.from_source_table(
-            source_table=self.connector['mcc_codes'],
-            primary_key='mcc_code'
-        ).infer_metadata()
-
-        # Define graph with relationships
-        self.graph = kumo.Graph(
-            tables={
-                'transactions': transactions_table,
-                'cards': cards_table,
-                'users': users_table,
-                'mcc': mcc_table
-            },
-            edges=[
-                # Transaction -> Card relationship
-                dict(
-                    src_table='transactions',
-                    fkey='card_id',
-                    dst_table='cards'
-                ),
-                # Transaction -> User relationship (via client_id)
-                dict(
-                    src_table='transactions',
-                    fkey='client_id',
-                    dst_table='users'
-                ),
-                # Transaction -> MCC relationship
-                dict(
-                    src_table='transactions',
-                    fkey='mcc',
-                    dst_table='mcc'
-                )
-            ]
-        )
-
-        print("Graph built successfully")
+        print("KumoRFM graph created successfully")
         return self.graph
 
-    def create_predictive_query(self):
-        """Create Kumo predictive query for fraud detection"""
-        print("Creating predictive query...")
+    def train_and_predict(self, transactions_df):
+        """Train and make predictions using KumoRFM"""
+        print("\nInitializing KumoRFM model...")
 
-        # Define the prediction task
-        pquery = kumo.PredictiveQuery(
-            graph=self.graph,
-            query="""
-            PREDICT transactions.is_fraud
-            FOR EACH transactions.id
-            """
-        )
+        # Create KumoRFM model
+        self.model = rfm.KumoRFM(self.graph)
 
-        print("Predictive query created")
-        return pquery
+        print("Making predictions with KumoRFM...")
+        print("Using predictive query to predict fraud...")
 
-    def train_model(self, pquery):
-        """Train Kumo model"""
-        print("Training Kumo model...")
+        # Sample transactions for prediction (KumoRFM RFM is designed for smaller queries)
+        # Use a smaller sample to avoid query length limitations
+        sample_size = min(1000, len(transactions_df))
+        print(f"Sampling {sample_size} transactions from {len(transactions_df)} total...")
 
-        # Train the model
-        self.model = pquery.train()
+        sampled_transactions = transactions_df.sample(n=sample_size, random_state=42)
+        transaction_ids = sampled_transactions['transaction_id'].tolist()
 
-        print("Model training completed")
-        return self.model
+        # Create PQL query to predict fraud for transactions
+        # We predict the is_fraud attribute for each transaction
+        # Note: use transaction_id (primary key), not id
+        query = f"PREDICT transactions.is_fraud FOR transactions.transaction_id IN {tuple(transaction_ids)}"
 
-    def make_predictions(self):
-        """Make predictions using trained model"""
-        print("Making predictions...")
+        print(f"Running query on {len(transaction_ids)} transactions...")
+        print(f"Query length: {len(query)} characters")
 
-        # Get predictions
-        predictions = self.model.predict()
+        # Make predictions
+        predictions_df = self.model.predict(query)
+
+        # Store sampled transactions for evaluation
+        self.sampled_transactions = sampled_transactions
 
         print("Predictions completed")
-        return predictions
+        print(f"Predictions shape: {predictions_df.shape}")
 
-    def evaluate_predictions(self, predictions, transactions_df):
+        return predictions_df
+
+    def evaluate_predictions(self, predictions_df, transactions_df):
         """Evaluate model predictions"""
-        print("\n=== Kumo Model Evaluation ===")
+        print("\n=== KumoRFM Model Evaluation ===")
 
         # Merge predictions with actual labels
-        results_df = transactions_df[['id', 'is_fraud']].merge(
-            predictions,
-            left_on='id',
-            right_on='transactions_id',
+        results_df = transactions_df[['transaction_id', 'is_fraud']].merge(
+            predictions_df,
+            left_on='transaction_id',
+            right_on='ENTITY',
             how='inner'
         )
 
-        # Remove rows with missing fraud labels (validation only on labeled data)
-        results_df = results_df.dropna(subset=['is_fraud'])
+        print(f"Evaluation set size: {len(results_df)}")
 
+        # Extract predictions
         y_true = results_df['is_fraud'].values
-        y_pred_proba = results_df['prediction'].values
+
+        # For binary classification, get the probability of fraud (class 1)
+        if 'True_PROB' in predictions_df.columns:
+            y_pred_proba = results_df['True_PROB'].values
+        elif 'TARGET_PRED' in predictions_df.columns:
+            y_pred_proba = results_df['TARGET_PRED'].values
+        else:
+            # Use the prediction column
+            pred_col = [c for c in predictions_df.columns if 'PRED' in c][0]
+            y_pred_proba = results_df[pred_col].values
+
         y_pred = (y_pred_proba > 0.5).astype(int)
 
         # Calculate metrics
@@ -258,51 +238,41 @@ class KumoFraudDetector:
         print(f"\nResults saved to {filepath}")
 
     def run_full_pipeline(self):
-        """Run the complete Kumo fraud detection pipeline"""
+        """Run the complete KumoRFM fraud detection pipeline"""
         print("=" * 80)
-        print("KUMO AI FRAUD DETECTION PIPELINE")
+        print("KUMORFM FRAUD DETECTION PIPELINE")
         print("=" * 80)
 
         try:
-            # Initialize Kumo
+            # Initialize KumoRFM
             self.initialize_kumo()
 
             # Load and prepare data
-            transactions_df, cards_df, users_df, mcc_df = self.load_and_prepare_data()
+            transactions_df, cards_df, users_df = self.load_and_prepare_data()
 
-            # Save data for Kumo
-            kumo_data_dir = self.save_data_for_kumo(transactions_df, cards_df, users_df, mcc_df)
+            # Create graph
+            self.create_graph(transactions_df, cards_df, users_df)
 
-            # Create connector
-            self.create_kumo_connector(kumo_data_dir)
+            # Train and predict
+            predictions_df = self.train_and_predict(transactions_df)
 
-            # Build graph
-            self.build_graph()
-
-            # Create predictive query
-            pquery = self.create_predictive_query()
-
-            # Train model
-            self.train_model(pquery)
-
-            # Make predictions
-            predictions = self.make_predictions()
-
-            # Evaluate
-            self.evaluate_predictions(predictions, transactions_df)
+            # Evaluate (use sampled transactions)
+            self.evaluate_predictions(predictions_df, self.sampled_transactions)
 
             # Save results
             self.save_results()
 
-            print("\n=== Kumo Pipeline Completed Successfully ===")
+            print("\n=== KumoRFM Pipeline Completed Successfully ===")
 
         except Exception as e:
-            print(f"\nError in Kumo pipeline: {str(e)}")
-            print("This may be due to:")
-            print("1. Kumo SDK not installed (pip install kumo)")
-            print("2. Invalid API key or URL")
-            print("3. Network connectivity issues")
-            print("4. Data format issues")
+            print(f"\nError in KumoRFM pipeline: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            print("\nThis may be due to:")
+            print("1. Invalid API key")
+            print("2. Network connectivity issues")
+            print("3. Data format issues")
+            print("4. API quota exceeded")
             raise
 
         return self.results
@@ -310,7 +280,7 @@ class KumoFraudDetector:
 
 def main():
     """Main execution function"""
-    detector = KumoFraudDetector()
+    detector = KumoRFMFraudDetector()
     results = detector.run_full_pipeline()
     print("\n=== Final Results ===")
     print(results)
